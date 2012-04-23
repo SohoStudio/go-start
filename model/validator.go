@@ -1,6 +1,5 @@
 package model
 
 type Validator interface {
-	Validate(metaData *MetaData) []*ValidationError	
+	Validate(metaData *MetaData) ValidationErrors
 }
-

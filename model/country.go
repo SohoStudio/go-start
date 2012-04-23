@@ -40,7 +40,7 @@ func (self *Country) EnglishName() string {
 func (self *Country) FixValue(metaData *MetaData) {
 }
 
-func (self *Country) Validate(metaData *MetaData) []*ValidationError {
+func (self *Country) Validate(metaData *MetaData) ValidationErrors {
 	str := self.Get()
 	errors := NoValidationErrors
 	if self.Required(metaData) || str != "" {

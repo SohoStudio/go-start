@@ -31,7 +31,7 @@ func (self *Phone) SetString(str string) error {
 func (self *Phone) FixValue(metaData *MetaData) {
 }
 
-func (self *Phone) Validate(metaData *MetaData) []*ValidationError {
+func (self *Phone) Validate(metaData *MetaData) ValidationErrors {
 	return NoValidationErrors
 }
 

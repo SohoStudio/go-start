@@ -4,6 +4,7 @@ import "time"
 
 const DateFormat = "2006-01-02"
 
+// Deprecated
 type Date string
 
 func (self *Date) Get() string {
@@ -71,12 +72,12 @@ func (self *Date) FixValue(metaData *MetaData) {
 }
 
 // todo min max
-func (self *Date) Validate(metaData *MetaData) []*ValidationError {
+func (self *Date) Validate(metaData *MetaData) ValidationErrors {
 	value := self.Get()
 	errors := NoValidationErrors
 	if self.Required(metaData) || value != "" {
 		if _, err := time.Parse(DateFormat, value); err != nil {
-			return NewValidationErrors(err, metaData)
+			return Err(err, metaData)
 		}
 	}
 	if self.Required(metaData) && self.IsEmpty() {

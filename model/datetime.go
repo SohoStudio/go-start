@@ -5,7 +5,7 @@ import "time"
 const DateTimeFormat = "2006-01-02 15:04:05"
 const ShortDateTimeFormat = "2006-01-02 15:04"
 
-// DateTime 
+// Deprecated
 type DateTime string
 
 func (self *DateTime) Get() string {
@@ -77,7 +77,7 @@ func (self *DateTime) FixValue(metaData *MetaData) {
 }
 
 // todo min max
-func (self *DateTime) Validate(metaData *MetaData) []*ValidationError {
+func (self *DateTime) Validate(metaData *MetaData) ValidationErrors {
 	value := self.Get()
 	errors := NoValidationErrors
 	if self.Required(metaData) || value != "" {

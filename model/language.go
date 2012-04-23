@@ -45,7 +45,7 @@ func (self *Language) EnglishName() string {
 func (self *Language) FixValue(metaData *MetaData) {
 }
 
-func (self *Language) Validate(metaData *MetaData) []*ValidationError {
+func (self *Language) Validate(metaData *MetaData) ValidationErrors {
 	str := self.Get()
 	errors := NoValidationErrors
 	if self.Required(metaData) || str != "" {

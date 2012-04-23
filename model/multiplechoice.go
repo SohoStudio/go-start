@@ -16,7 +16,7 @@ func (self *MultipleChoice) SetString(str string) error {
 func (self *MultipleChoice) FixValue(metaData *MetaData) {
 }
 
-func (self *MultipleChoice) Validate(metaData *MetaData) []*ValidationError {
+func (self *MultipleChoice) Validate(metaData *MetaData) ValidationErrors {
 	// todo
 	return NoValidationErrors
 }

@@ -66,7 +66,7 @@ func (self *DynamicChoice) SetBSON(raw bson.Raw) (err error) {
 func (self *DynamicChoice) FixValue(metaData *MetaData) {
 }
 
-func (self *DynamicChoice) Validate(metaData *MetaData) []*ValidationError {
+func (self *DynamicChoice) Validate(metaData *MetaData) ValidationErrors {
 	err := self.CheckIndex(self.index)
 	if err != nil {
 		return NewValidationErrors(err, metaData)

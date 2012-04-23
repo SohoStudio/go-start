@@ -42,7 +42,7 @@ func (self *Url) SetString(str string) error {
 func (self *Url) FixValue(metaData *MetaData) {
 }
 
-func (self *Url) Validate(metaData *MetaData) []*ValidationError {
+func (self *Url) Validate(metaData *MetaData) ValidationErrors {
 	errors := NoValidationErrors
 	if self.IsEmpty() {
 		if self.Required(metaData) {

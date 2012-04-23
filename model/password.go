@@ -39,7 +39,7 @@ func (self *Password) SetString(str string) error {
 func (self *Password) FixValue(metaData *MetaData) {
 }
 
-func (self *Password) Validate(metaData *MetaData) []*ValidationError {
+func (self *Password) Validate(metaData *MetaData) ValidationErrors {
 	return NoValidationErrors
 }
 

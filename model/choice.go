@@ -31,14 +31,14 @@ func (self *Choice) SetString(str string) error {
 func (self *Choice) FixValue(metaData *MetaData) {
 }
 
-func (self *Choice) Validate(metaData *MetaData) []*ValidationError {
+func (self *Choice) Validate(metaData *MetaData) ValidationErrors {
 	str := string(*self)
 	options := self.Options(metaData)
 	if options == nil {
-		return NewValidationErrors(errs.Format("model.Choice needs options"), metaData)
+		return Err("model.Choice needs options", metaData)
 	}
 	if len(options) == 0 {
-		return NewValidationErrors(errs.Format("model.Choice needs options"), metaData)
+		return Err("model.Choice needs options", metaData)
 	}
 	found := false
 	for _, option := range options {
@@ -48,7 +48,7 @@ func (self *Choice) Validate(metaData *MetaData) []*ValidationError {
 		}
 	}
 	if !found {
-		return NewValidationErrors(&InvalidChoice{str, options}, metaData)
+		return Err(&InvalidChoice{str, options}, metaData)
 	}
 	return NoValidationErrors
 }
