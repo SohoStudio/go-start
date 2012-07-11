@@ -2,14 +2,15 @@ package mongo
 
 import (
 	"fmt"
-	"github.com/ungerik/go-start/errs"
-	"github.com/ungerik/go-start/model"
-	"github.com/ungerik/go-start/utils"
-	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
 	"reflect"
 	"strconv"
 	"strings"
+	"labix.org/v2/mgo"
+	"labix.org/v2/mgo/bson"
+	"github.com/ungerik/go-start/errs"
+	"github.com/ungerik/go-start/model"
+	"github.com/ungerik/go-start/utils"
+	"github.com/ungerik/go-start/debug"
 )
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,15 +60,15 @@ Example for creating, modifying and saving a document:
 */
 type Collection struct {
 	queryBase
-	Name         string
-	DocumentType reflect.Type
-	collection   *mgo.Collection
+	Name          string
+	DocumentType  reflect.Type
+	mgoCollection *mgo.Collection
 	// foreignRefs  []ForeignRef
 }
 
 func (self *Collection) Init() {
 	self.thisQuery = self
-	//self.collection = database.C(self.Name)
+	//self.mgoCollection = database.C(self.Name)
 	// self.foreignRefs = []ForeignRef{}
 }
 
@@ -75,7 +76,7 @@ func (self *Collection) checkDBConnection() {
 	if self == nil {
 		panic("mongo.Collection is nil")
 	}
-	if self.collection.Database.Session == nil {
+	if self.mgoCollection.Database.Session == nil {
 		panic("mongo.Collection '" + self.Name + "' not initialized. Have you called mongo.AddCollection(" + self.Name + ")?")
 	}
 }
@@ -90,7 +91,7 @@ func (self *Collection) bsonSelector() bson.M {
 
 func (self *Collection) mongoQuery() (q *mgo.Query, err error) {
 	self.checkDBConnection()
-	return self.collection.Find(nil), nil
+	return self.mgoCollection.Find(nil), nil
 }
 
 func (self *Collection) subDocumentType(docType reflect.Type, fieldName string, subDocSelectors []string) (reflect.Type, error) {
@@ -190,7 +191,7 @@ func (self *Collection) DocumentWithID(id bson.ObjectId, subDocSelectors ...stri
 		panic("Sub document selectors are not implemented")
 	}
 	if id == "" {
-		return nil, errs.Format("mongo.Collection %s: Can't get document with empty id", self.Name)
+		return nil, errs.Format("mongo.Collection '%s': Can't get document with empty id", self.Name)
 	}
 	if err = self.ValidateSelector(subDocSelectors...); err != nil {
 		return nil, err
@@ -198,7 +199,7 @@ func (self *Collection) DocumentWithID(id bson.ObjectId, subDocSelectors ...stri
 
 	self.checkDBConnection()
 	document = self.NewDocument(subDocSelectors...)
-	q := self.collection.FindId(id)
+	q := self.mgoCollection.FindId(id)
 	if len(subDocSelectors) == 0 {
 		err = q.One(document)
 	} else {
@@ -254,7 +255,7 @@ func (self *Collection) FilterReferenced(refs []Ref) Query {
 }
 
 func (self *Collection) Count() (n int, err error) {
-	return self.collection.Count()
+	return self.mgoCollection.Count()
 }
 
 // Inserts document regardless if it's already in the collection
@@ -267,7 +268,7 @@ func (self *Collection) Insert(document interface{}) (id bson.ObjectId, err erro
 	if doc, ok := document.(Document); ok {
 		doc.SetObjectId(id)
 	}
-	change, err := self.collection.Upsert(bson.M{"_id": id}, document)
+	change, err := self.mgoCollection.Upsert(bson.M{"_id": id}, document)
 	if err != nil {
 		return id, err
 	}
@@ -280,17 +281,19 @@ func (self *Collection) Insert(document interface{}) (id bson.ObjectId, err erro
 
 func (self *Collection) Update(id bson.ObjectId, document interface{}) (err error) {
 	self.checkDBConnection()
-	return self.collection.Update(bson.M{"_id": id}, document)
+	err = self.mgoCollection.Update(bson.M{"_id": id}, document)
+	debug.Nop()
+	return err
 }
 
 func (self *Collection) Remove(ids ...bson.ObjectId) error {
 	self.checkDBConnection()
-	return self.collection.Remove(bson.M{"_id": bson.M{"$in": ids}})
+	return self.mgoCollection.Remove(bson.M{"_id": bson.M{"$in": ids}})
 }
 
 func (self *Collection) RemoveAllNotIn(ids ...bson.ObjectId) error {
 	self.checkDBConnection()
-	return self.collection.Remove(bson.M{"_id": bson.M{"$nin": ids}})
+	return self.mgoCollection.Remove(bson.M{"_id": bson.M{"$nin": ids}})
 }
 
 //func (self *Collection) EnsureIndex(unique bool, keyNodes ...oldmodel.Node) error {
@@ -303,5 +306,5 @@ func (self *Collection) RemoveAllNotIn(ids ...bson.ObjectId) error {
 //		Unique:     unique,
 //		Background: true,
 //	}
-//	return self.collection.EnsureIndex(index)
+//	return self.mgoCollection.EnsureIndex(index)
 //}

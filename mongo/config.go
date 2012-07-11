@@ -54,7 +54,7 @@ func Init() (err error) {
 	Database = session.DB(Config.Database)
 
 	for _, collection := range collections {
-		collection.collection = Database.C(collection.Name)
+		collection.mgoCollection = Database.C(collection.Name)
 	}
 
 	return nil

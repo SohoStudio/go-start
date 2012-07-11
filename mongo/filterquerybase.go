@@ -53,7 +53,7 @@ func (self *filterQueryBase) mongoQuery() (q *mgo.Query, err error) {
 
 	collection := self.Collection()
 	collection.checkDBConnection()
-	return collection.collection.Find(bsonQuery), nil
+	return collection.mgoCollection.Find(bsonQuery), nil
 }
 
 func (self *filterQueryBase) IsFilter() bool {

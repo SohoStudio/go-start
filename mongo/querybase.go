@@ -2,12 +2,12 @@ package mongo
 
 import (
 	"fmt"
-	"github.com/ungerik/go-start/debug"
-	"github.com/ungerik/go-start/errs"
-	"github.com/ungerik/go-start/model"
+	"strings"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
-	"strings"
+	"github.com/ungerik/go-start/errs"
+	"github.com/ungerik/go-start/model"
+	"github.com/ungerik/go-start/debug"
 )
 
 //	http://www.mongodb.org/display/DOCS/Advanced+Queries
@@ -373,6 +373,6 @@ func (self *queryBase) Refs() (refs []Ref, err error) {
 }
 
 func (self *queryBase) RemoveAll() error {
-	_, err := self.Collection().collection.RemoveAll(self.bsonSelector())
+	_, err := self.Collection().mgoCollection.RemoveAll(self.bsonSelector())
 	return err
 }
